@@ -42,7 +42,7 @@ bert_model = SentenceTransformer('bert-base-nli-mean-tokens')
 text_prompt= text_prompt.lower()
 embeddings=bert_model.encode(text_prompt)
 
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class D_GET_LOGITS(nn.Module):
     def __init__(self, ndf, nef, bcondition=True):
         super(D_GET_LOGITS, self).__init__()

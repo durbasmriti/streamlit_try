@@ -5,3 +5,4 @@ matplotlib
 numpy
 transformers 
 ipython
+cv2

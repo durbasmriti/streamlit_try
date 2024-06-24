@@ -102,12 +102,16 @@ class residual(nn.Module):
         out = self.relu(out)
         return out    
     
+import torch
+import torch.nn as nn
+
 class CA_NET(nn.Module):
-    def __init__(self, condition_dim = condition_dim, device = device):
+    def __init__(self, condition_dim=None, device=None):
         super(CA_NET, self).__init__()
-        self.device = device
+        
+        self.device = device if device is not None else torch.device('cpu')  # Set default device
         self.t_dim = 768
-        self.c_dim = condition_dim
+        self.c_dim = condition_dim if condition_dim is not None else 256  # Set default condition dimension
         self.fc = nn.Linear(self.t_dim, self.c_dim * 2, bias=True).to(self.device)
         self.relu = nn.ReLU().to(self.device)
 
@@ -127,6 +131,7 @@ class CA_NET(nn.Module):
         mu, logvar = self.encode(text_embedding)
         c_code = self.reparametrize(mu, logvar)
         return c_code, mu, logvar
+
 class STAGE1_G(nn.Module):   #stage 1 generator 
     def __init__(self, df_dim, condition_dim):
         super(STAGE1_D, self).__init__()

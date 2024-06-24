@@ -1,0 +1,7 @@
+torch
+torchvision 
+streamlit 
+matplotlib
+numpy
+transformers 
+ipython

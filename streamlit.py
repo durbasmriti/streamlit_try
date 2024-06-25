@@ -227,7 +227,7 @@ generator.load_state_dict(torch.load('generator.pth', map_location=torch.device(
 generator.eval()
 batch_size = 1
 noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
-images, mu, logvar = generator(embeddings, noise)
+images, mu, logvar = generator(embeddings, noise)[1:]
 st.image(images, caption='Generated Image', use_column_width=True)
  
 

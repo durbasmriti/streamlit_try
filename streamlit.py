@@ -43,7 +43,9 @@ text_prompt = st.text_input("Enter a text prompt:")
 bert_model = SentenceTransformer('bert-base-nli-mean-tokens')
 text_prompt= text_prompt.lower()
 embeddings=bert_model.encode(text_prompt)
-
+gf_dim = 128
+condition_dim = 256
+z_dim = 100
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class D_GET_LOGITS(nn.Module):
     def __init__(self, ndf, nef, bcondition=True):
@@ -134,40 +136,7 @@ class CA_NET(nn.Module):
         c_code = self.reparametrize(mu, logvar)
         return c_code, mu, logvar
 
-class STAGE1_G(nn.Module):   #stage 1 generator 
-    def __init__(self, df_dim, condition_dim):
-        super(STAGE1_D, self).__init__()
-        self.df_dim = df_dim
-        self.ef_dim = condition_dim
-        self.define_module()
-
-    def define_module(self):
-        ndf, nef = self.df_dim, self.ef_dim
-        self.encode_img = nn.Sequential(
-            nn.Conv2d(3, ndf, 4, 2, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf) x 32 x 32
-            nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 2),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size (ndf*2) x 16 x 16
-            nn.Conv2d(ndf*2, ndf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 4),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size (ndf*4) x 8 x 8
-            nn.Conv2d(ndf*4, ndf * 8, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 8),
-            # state size (ndf * 8) x 4 x 4)
-            nn.LeakyReLU(0.2, inplace=True)
-        )
-
-        self.get_cond_logits = D_GET_LOGITS(ndf, nef)
-        self.get_uncond_logits = None
-
-    def forward(self, image):
-        img_embedding = self.encode_img(image)
-
-        return img_embedding
+class STAGE1_G(nn.Module):
     def __init__(self,
                  gf_dim, condition_dim, z_dim, device = device):
         
@@ -249,16 +218,12 @@ class STAGE1_D(nn.Module): #discriminator
 
         return img_embedding
 
-gf_dim = 128
-condition_dim = 256
-z_dim = 100
 generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)
 generator.load_state_dict(torch.load('generator.pth', map_location=torch.device('cpu')))
 generator.eval()
 batch_size = 1
-z_dim = 100
 noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
-images, mu, logvar = generator(text_prompt, noise)
+images, mu, logvar = generator(embeddings, noise)
 st.image(images, caption='Generated Image', use_column_width=True)
  
 

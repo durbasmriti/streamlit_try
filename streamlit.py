@@ -123,6 +123,8 @@ class CA_NET(nn.Module):
         if isinstance(text_embedding, np.ndarray):
             text_embedding = torch.from_numpy(text_embedding)
         text_embedding = text_embedding.to(self.device)
+        if text_embedding.dim() == 1:
+            text_embedding = text_embedding.unsqueeze(0)
         x = self.relu(self.fc(text_embedding))
         mu = x[:, :self.c_dim]
         logvar = x[:, self.c_dim:]

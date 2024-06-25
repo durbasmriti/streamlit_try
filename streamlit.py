@@ -247,7 +247,10 @@ class STAGE1_D(nn.Module): #discriminator
 
         return img_embedding
 
-generator = STAGE1_G()
+gf_dim = 64
+condition_dim = 256
+z_dim = 100
+generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)
 generator.load_state_dict(torch.load('generator.pth', map_location=torch.device('cpu')))
 generator.eval()
 batch_size = 1

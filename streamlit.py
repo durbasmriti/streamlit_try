@@ -249,7 +249,7 @@ class STAGE1_D(nn.Module): #discriminator
 
         return img_embedding
 
-gf_dim = 64
+gf_dim = 128
 condition_dim = 256
 z_dim = 100
 generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)

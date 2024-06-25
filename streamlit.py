@@ -40,9 +40,9 @@ from PIL import Image
 
 st.title("Pokemon image generator")
 text_prompt = st.text_input("Enter a text prompt:")
+generate_button = st.button("generate Image")
+
 bert_model = SentenceTransformer('bert-base-nli-mean-tokens')
-text_prompt= text_prompt.lower()
-embeddings=bert_model.encode(text_prompt)
 gf_dim = 128
 condition_dim = 256
 z_dim = 100
@@ -221,16 +221,19 @@ class STAGE1_D(nn.Module): #discriminator
         img_embedding = self.encode_img(image)
 
         return img_embedding
-
-generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)
-generator.load_state_dict(torch.load('generator.pth', map_location=torch.device('cpu')))
-generator.eval()
-batch_size = 1
-noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
-images, mu, logvar = generator(embeddings, noise)[1:]
-images = images.squeeze().detach().cpu().numpy().transpose(1, 2, 0)
-images = (images - images.min()) / (images.max() - images.min())
-st.image(images, caption='Generated Image', use_column_width=True)
+        
+if generate_button and text_prompt:
+    text_prompt = text_prompt.lower()
+    embeddings = bert_model.encode(text_prompt)
+    generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)
+    generator.load_state_dict(torch.load('generator.pth', map_location=torch.device('cpu')))
+    generator.eval()
+    batch_size = 1
+    noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
+    images, mu, logvar = generator(embeddings, noise)[1:]
+    images = images.squeeze().detach().cpu().numpy().transpose(1, 2, 0)
+    images = (images - images.min()) / (images.max() - images.min())
+    st.image(images, caption='Generated Image', use_column_width=True)
  
 
 

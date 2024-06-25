@@ -229,7 +229,7 @@ batch_size = 1
 noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
 images, mu, logvar = generator(embeddings, noise)[1:]
 images = images.squeeze().detach().cpu().numpy().transpose(1, 2, 0)
-imges = (images - images.min()) / (images.max() - images.min())
+images = (images - images.min()) / (images.max() - images.min())
 st.image(images, caption='Generated Image', use_column_width=True)
  
 

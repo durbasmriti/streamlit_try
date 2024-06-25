@@ -120,6 +120,8 @@ class CA_NET(nn.Module):
         self.relu = nn.ReLU().to(self.device)
 
     def encode(self, text_embedding):
+        if isinstance(text_embedding, np.ndarray):
+            text_embedding = torch.from_numpy(text_embedding)
         text_embedding = text_embedding.to(self.device)
         x = self.relu(self.fc(text_embedding))
         mu = x[:, :self.c_dim]

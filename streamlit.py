@@ -1,3 +1,7 @@
+import os
+import gdown
+url = 'https://drive.google.com/file/d/1sYIqIEoqmyIEljTwJYM6vRqJjhNLwbUi/view?usp=sharing'
+output = 'generator.pth'
 import torch
 import torch.nn as nn
 import streamlit as st
@@ -251,7 +255,7 @@ gf_dim = 64
 condition_dim = 256
 z_dim = 100
 generator = STAGE1_G(gf_dim=gf_dim, condition_dim=condition_dim, z_dim=z_dim, device=device)
-generator.load_state_dict(torch.load('generator.pth', map_location=torch.device('cpu')))
+generator.load_state_dict(torch.load(output, map_location=torch.device('cpu')))
 generator.eval()
 batch_size = 1
 z_dim = 100

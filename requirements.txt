@@ -7,4 +7,4 @@ transformers==4.41.2
 ipython==8.25.0
 opencv-python==4.10.0.84
 sentence-transformers==2.2.2
-
+gdown==4.5.1

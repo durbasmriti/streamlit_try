@@ -113,9 +113,9 @@ class CA_NET(nn.Module):
     def __init__(self, condition_dim=None, device=None):
         super(CA_NET, self).__init__()
         
-        self.device = device if device is not None else torch.device('cpu')  # Set default device
+        self.device = device if device is not None else torch.device('cpu')  
         self.t_dim = 768
-        self.c_dim = condition_dim if condition_dim is not None else 256  # Set default condition dimension
+        self.c_dim = condition_dim if condition_dim is not None else 256  
         self.fc = nn.Linear(self.t_dim, self.c_dim * 2, bias=True).to(self.device)
         self.relu = nn.ReLU().to(self.device)
 
@@ -228,6 +228,7 @@ generator.eval()
 batch_size = 1
 noise = torch.randn(batch_size, z_dim, dtype=torch.float32)
 images, mu, logvar = generator(embeddings, noise)[1:]
+images = images.squeeze().detach().cpu().numpy().transpose(1, 2, 0)
 st.image(images, caption='Generated Image', use_column_width=True)
  
 
